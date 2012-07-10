@@ -92,54 +92,9 @@ class CI_DB_sqlite_forge extends CI_DB_forge {
 			return TRUE;
 		}
 
-		$sql .= $this->db->escape_identifiers($table).' (';
-		$current_field_count = 0;
-
-		foreach ($this->fields as $field => $attributes)
-		{
-			// Numeric field names aren't allowed in databases, so if the key is
-			// numeric, we know it was assigned by PHP and the developer manually
-			// entered the field information, so we'll simply add it to the list
-			if (is_numeric($field))
-			{
-				$sql .= "\n\t".$attributes;
-			}
-			else
-			{
-				$attributes = array_change_key_case($attributes, CASE_UPPER);
-
-				$sql .= "\n\t".$this->db->escape_identifiers($field).' '.$attributes['TYPE'];
-
-				empty($attributes['CONSTRAINT']) OR $sql .= '('.$attributes['CONSTRAINT'].')';
-
-				if ( ! empty($attributes['UNSIGNED']) && $attributes['UNSIGNED'] === TRUE)
-				{
-					$sql .= ' UNSIGNED';
-				}
-
-				if (isset($attributes['DEFAULT']))
-				{
-					$sql .= " DEFAULT '".$attributes['DEFAULT']."'";
-				}
-
-
-				$sql .= ( ! empty($attributes['NULL']) && $attributes['NULL'] === TRUE)
-					? ' NULL' : ' NOT NULL';
-
-				if ( ! empty($attributes['AUTO_INCREMENT']) && $attributes['AUTO_INCREMENT'] === TRUE)
-				{
-					$sql .= ' AUTO_INCREMENT';
-				}
-			}
-
-			// don't add a comma on the end of the last field
-			if (++$current_field_count < count($this->fields))
-			{
-				$sql .= ',';
-			}
-		}
-
 		return $sql
+			.$this->db->escape_identifiers($table).' ('
+			.$this->_process_fields()
 			.$this->_process_primary_keys()
 			."\n);";
 	}
@@ -178,6 +133,62 @@ class CI_DB_sqlite_forge extends CI_DB_forge {
 			.($default_value != '' ? " DEFAULT '".$default_value."'" : '')
 			// If NOT NULL is specified, the field must have a DEFAULT value other than NULL
 			.(($null !== NULL && $default_value !== 'NULL') ? ' NOT NULL' : ' NULL');
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Process fields
+	 *
+	 * @return	string
+	 */
+	protected function _process_fields()
+	{
+		foreach ($this->fields as $field => $attributes)
+		{
+			$attrs = array_change_key_case($attributes, CASE_UPPER);
+
+			if (empty($attributes['TYPE']))
+			{
+				unset($this->fields[$field]);
+				continue;
+			}
+
+			if (empty($attributes['NAME']))
+			{
+				$attributes['NAME'] = $field;
+			}
+
+			$this->fields[$field] = "\n\t".$this->db->escape_identifiers($attributes['NAME']);
+
+			if ( ! empty($attributes['AUTO_INCREMENT']) && $attributes['AUTO_INCREMENT'] === TRUE && stripos($attributes['TYPE'], 'int') !== FALSE)
+			{
+				$attributes['TYPE'] = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+				in_array($attributes['NAME'], $this->primary_keys, TRUE) OR $this->primary_keys[] = $attributs['NAME'];
+			}
+
+			$this->fields[$field] .= ' '.$attributes['TYPE'];
+
+			if (isset($attributes['DEFAULT']))
+			{
+				$this->fields[$field] .= ' DEFAULT '.$this->db->escape($attributes['DEFAULT']);
+			}
+
+			$this->fields[$field] .= (empty($attributes['NULL']) && $attributes['NULL'] === TRUE)
+						? ' NULL' : ' NOT NULL';
+
+			if ( ! empty($attributes['UNIQUE']) && $attributes['UNIQUE'] === TRUE)
+			{
+				$this->fields[$field] .= ' UNIQUE';
+			}
+		}
+
+		if (empty($this->fields))
+		{
+			return FALSE;
+		}
+
+		return implode(',', $this->fields);
 	}
 
 }

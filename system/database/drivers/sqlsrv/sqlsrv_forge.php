@@ -130,6 +130,11 @@ class CI_DB_sqlsrv_forge extends CI_DB_forge {
 						? "\n\t".$this->db->escape_identifiers($field)
 						: "\n\t".$this->db->escape_identifiers($attributes['NAME']);
 
+			if (empty($attributes['UNSIGNED']) OR $attributes['UNSIGNED'] !== TRUE)
+			{
+				$attributes['UNSIGNED'] = FALSE;
+			}
+
 			switch (strtoupper($attributes['TYPE']))
 			{
 				case 'CHAR':
@@ -140,7 +145,7 @@ class CI_DB_sqlsrv_forge extends CI_DB_forge {
 				case 'VARBINARY':
 				case 'FLOAT':
 					empty($attributes['CONSTRAINT']) OR $attributes['CONSTRAINT'] = (int) $attributes['CONSTRAINT'];
-					if ( ! empty($attributes['UNSIGNED']) && $attributes['UNSIGNED'] === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'REAL';
 						$attributes['UNSIGNED'] = FALSE;
@@ -151,19 +156,19 @@ class CI_DB_sqlsrv_forge extends CI_DB_forge {
 					$attributes['TYPE'] = 'INT';
 					$attributes['UNSIGNED'] = FALSE;
 				case 'TINYINT':
-					if ( ! empty($attributes['UNSIGNED']) && $attributes['UNSIGNED'] === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'SMALLINT';
 						$attributes['UNSIGNED'] = FALSE;
 					}
 				case 'SMALLINT':
-					if ( ! empty($attributes['UNSIGNED']) && $attributes['UNSIGNED'] === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'INT';
 						$attributes['UNSIGNED'] = FALSE;
 					}
 				case 'INT':
-					if ( ! empty($attributes['UNSIGNED']) && $attributes['UNSIGNED'] === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'BIGINT';
 						$attributes['UNSIGNED'] = FALSE;
