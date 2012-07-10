@@ -34,7 +34,8 @@
  */
 class CI_DB_pdo_mysql_forge extends CI_DB_pdo_forge {
 
-	protected $_create_database = 'CREATE DATABASE %s CHARACTER SET %s COLLATE %s';
+	protected $_create_database	= 'CREATE DATABASE %s CHARACTER SET %s COLLATE %s';
+	protected $_drop_table_if	= 'DROP TABLE IF EXISTS';
 
 	/**
 	 * Create Table

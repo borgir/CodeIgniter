@@ -34,27 +34,8 @@
  */
 class CI_DB_pdo_dblib_forge extends CI_DB_pdo_forge {
 
-	protected $_create_table_if = "IF NOT EXISTS (SELECT * FROM sysobjects WHERE ID = object_id(N'%s') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)\nCREATE TABLE";
-
-	/**
-	 * Drop Table
-	 *
-	 * Generates a platform-specific DROP TABLE string
-	 *
-	 * @param	string	the table name
-	 * @param	bool
-	 * @return	string
-	 */
-	protected function _drop_table($table, $if_exists)
-	{
-		$sql = 'DROP TABLE '.$this->db->escape_identifiers($table);
-
-		return ($if_exists)
-			? "IF EXISTS (SELECT * FROM sysobjects WHERE ID = object_id(N'".$table."') AND OBJECTPROPERTY(id, N'IsUserTable') = 1) ".$sql
-			: $sql;
-	}
-
-	// --------------------------------------------------------------------
+	protected $_create_table_if	= "IF NOT EXISTS (SELECT * FROM sysobjects WHERE ID = object_id(N'%s') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)\nCREATE TABLE";
+	protected $_drop_table_if	= "IF EXISTS (SELECT * FROM sysobjects WHERE ID = object_id(N'%s') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)\nDROP TABLE";
 
 	/**
 	 * Alter table query

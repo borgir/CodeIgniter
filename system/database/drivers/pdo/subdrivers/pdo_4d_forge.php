@@ -38,6 +38,7 @@ class CI_DB_pdo_4d_forge extends CI_DB_4d_forge {
 	protected $_drop_database	= 'DROP SCHEMA %s';
 	protected $_create_table_if	= 'CREATE TABLE IF NOT EXISTS';
 	protected $_rename_table	= FALSE;
+	protected $_drop_table_if	= 'DROP TABLE IF EXISTS';
 
 	/**
 	 * Alter table query

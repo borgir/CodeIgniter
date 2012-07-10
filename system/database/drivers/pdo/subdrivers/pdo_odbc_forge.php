@@ -35,27 +35,6 @@
 class CI_DB_pdo_odbc_forge extends CI_DB_pdo_forge {
 
 	/**
-	 * Drop Table
-	 *
-	 * Generates a platform-specific DROP TABLE string
-	 *
-	 * @param	string	the table name
-	 * @param	bool
-	 * @return	mixed
-	 */
-	protected function _drop_table($table, $if_exists)
-	{
-		if ($if_exists === TRUE && ! $this->db->table_exists($table))
-		{
-			return TRUE;
-		}
-
-		return 'DROP TABLE '.$this->db->escape_identifiers($table);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Alter table query
 	 *
 	 * Generates a platform-specific query so that a table can be altered

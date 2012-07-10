@@ -44,6 +44,7 @@ abstract class CI_DB_forge {
 	protected $_drop_database	= 'DROP DATABASE %s';
 	protected $_create_table_if	= 'CREATE TABLE IF NOT EXISTS';
 	protected $_rename_table	= 'ALTER TABLE %s RENAME TO %s';
+	protected $_drop_table_if	= 'DROP TABLE IF EXISTS';
 
 	/**
 	 * Constructor
@@ -275,7 +276,7 @@ abstract class CI_DB_forge {
 
 		if ($if_not_exists === TRUE)
 		{
-			if ($this->_if_not_exists === FALSE
+			if ($this->_if_not_exists === FALSE)
 			{
 				if ($this->db->table_exists($table))
 				{
@@ -288,7 +289,7 @@ abstract class CI_DB_forge {
 			}
 		}
 
-		return $sql
+		return $sql.' '
 			.$this->db->escape_identifiers($table).'('
 			.$this->_process_fields()
 			.$this->_process_primary_keys()
@@ -349,7 +350,24 @@ abstract class CI_DB_forge {
 	 */
 	protected function _drop_table($table, $if_exists)
 	{
-		return 'DROP TABLE '.($if_exists ? 'IF EXISTS ' : '').$this->db->escape_identifiers($table);
+		$sql = 'DROP TABLE';
+
+		if ($if_exists)
+		{
+			if ($this->_drop_table_if === FALSE)
+			{
+				if ( ! $this->db->table_exists($table))
+				{
+					return TRUE;
+				}
+			}
+			else
+			{
+				$sql = sprintf($this->_drop_table, $this->db->escape_identifiers($table));
+			}
+		}
+
+		return $sql.' '.$this->db->escape_identifiers($table);
 	}
 
 	// --------------------------------------------------------------------

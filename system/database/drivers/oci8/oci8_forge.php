@@ -36,27 +36,7 @@ class CI_DB_oci8_forge extends CI_DB_forge {
 
 	protected $_create_database	= FALSE;
 	protected $_drop_database	= FALSE;
-
-	/**
-	 * Drop Table
-	 *
-	 * Generates a platform-specific DROP TABLE string
-	 *
-	 * @param	string	the table name
-	 * @param	bool
-	 * @return	mixed
-	 */
-	protected function _drop_table($table, $if_exists)
-	{
-		if ($if_exists === TRUE && ! $this->db->table_exists($table))
-		{
-			return TRUE;
-		}
-
-		return 'DROP TABLE '.$this->db->escape_identifiers($table);
-	}
-
-	// --------------------------------------------------------------------
+	protected $_drop_table_if	= FALSE;
 
 	/**
 	 * Alter table query

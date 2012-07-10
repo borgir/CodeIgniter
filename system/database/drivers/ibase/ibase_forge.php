@@ -36,6 +36,7 @@ class CI_DB_ibase_forge extends CI_DB_forge {
 
 	protected $_create_table_if	= FALSE;
 	protected $_rename_table	= FALSE;
+	protected $_drop_table_if	= FALSE;
 
 	/**
 	 * Create database
@@ -77,27 +78,6 @@ class CI_DB_ibase_forge extends CI_DB_forge {
 		}
 
 		return TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Drop Table
-	 *
-	 * Generates a platform-specific DROP TABLE string
-	 *
-	 * @param	string	the table name
-	 * @param	bool
-	 * @return	mixed
-	 */
-	protected function _drop_table($table, $if_exists)
-	{
-		if ($if_exists === TRUE && ! $this->db->table_exists($table))
-		{
-			return TRUE;
-		}
-
-		return 'DROP TABLE '.$this->db->escape_identifiers($table);
 	}
 
 	// --------------------------------------------------------------------
