@@ -130,14 +130,14 @@ class CI_DB_pdo_pgsql_forge extends CI_DB_pdo_forge {
 					$attributes['TYPE'] = 'INTEGER';
 					$attributes['UNSIGNED'] = FALSE;
 				case 'TINYINT':
-					if ($attributes['UNSIGNED']) === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'SMALLINT';
 						$attributes['UNSIGNED'] = FALSE;
 					}
 				case 'INT2':
 				case 'SMALLINT':
-					if ($attributes['UNSIGNED']) === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'INTEGER';
 						$attributes['UNSIGNED'] = FALSE;
@@ -145,7 +145,7 @@ class CI_DB_pdo_pgsql_forge extends CI_DB_pdo_forge {
 				case 'INT':
 				case 'INT4':
 				case 'INTEGER':
-					if ($attributes['UNSIGNED']) === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'BIGINT';
 						$attributes['UNSIGNED'] = FALSE;

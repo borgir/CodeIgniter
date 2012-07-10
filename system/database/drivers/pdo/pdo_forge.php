@@ -26,13 +26,17 @@
  */
 
 /**
- * PDO (Dummy) Forge Class
+ * PDO Forge Class
  *
  * @category	Database
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/database/
  */
-class CI_DB_pdo_forge extends CI_DB_forge {}
+class CI_DB_pdo_forge extends CI_DB_forge {
+
+	protected $_create_table_if	= FALSE;
+
+}
 
 /* End of file pdo_forge.php */
 /* Location: ./system/database/drivers/pdo/pdo_forge.php */

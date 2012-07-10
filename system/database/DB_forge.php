@@ -42,6 +42,7 @@ abstract class CI_DB_forge {
 	// Platform specific SQL strings
 	protected $_create_database	= 'CREATE DATABASE %s';
 	protected $_drop_database	= 'DROP DATABASE %s';
+	protected $_create_table_if	= 'CREATE TABLE IF NOT EXISTS';
 	protected $_rename_table	= 'ALTER TABLE %s RENAME TO %s';
 
 	/**
@@ -270,12 +271,25 @@ abstract class CI_DB_forge {
 	 */
 	protected function _create_table($table, $if_not_exists)
 	{
-		if ($if_not_exists === TRUE && $this->db->table_exists($table))
+		$sql = 'CREATE TABLE';
+
+		if ($if_not_exists === TRUE)
 		{
-			return TRUE;
+			if ($this->_if_not_exists === FALSE
+			{
+				if ($this->db->table_exists($table))
+				{
+					return TRUE;
+				}
+			}
+			else
+			{
+				$sql = sprintf($this->_create_table_if, $this->db->escape_identifiers($table));
+			}
 		}
 
-		return 'CREATE TABLE '.$this->db->escape_identifiers($table).'('
+		return $sql
+			.$this->db->escape_identifiers($table).'('
 			.$this->_process_fields()
 			.$this->_process_primary_keys()
 			."\n);";

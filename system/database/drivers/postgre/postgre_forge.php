@@ -61,7 +61,7 @@ class CI_DB_postgre_forge extends CI_DB_forge {
 		return $sql
 			.$this->db->escape_identifiers($table).' ('
 			.$this->_process_fields()
-			.$this->_process_primary_keys();
+			.$this->_process_primary_keys()
 			."\n);";
 	}
 
@@ -130,14 +130,14 @@ class CI_DB_postgre_forge extends CI_DB_forge {
 					$attributes['TYPE'] = 'INTEGER';
 					$attributes['UNSIGNED'] = FALSE;
 				case 'TINYINT':
-					if ($attributes['UNSIGNED']) === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'SMALLINT';
 						$attributes['UNSIGNED'] = FALSE;
 					}
 				case 'INT2':
 				case 'SMALLINT':
-					if ($attributes['UNSIGNED']) === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'INTEGER';
 						$attributes['UNSIGNED'] = FALSE;
@@ -145,7 +145,7 @@ class CI_DB_postgre_forge extends CI_DB_forge {
 				case 'INT':
 				case 'INT4':
 				case 'INTEGER':
-					if ($attributes['UNSIGNED']) === TRUE)
+					if ($attributes['UNSIGNED'] === TRUE)
 					{
 						$attributes['TYPE'] = 'BIGINT';
 						$attributes['UNSIGNED'] = FALSE;

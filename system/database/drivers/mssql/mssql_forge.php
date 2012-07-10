@@ -34,27 +34,7 @@
  */
 class CI_DB_mssql_forge extends CI_DB_forge {
 
-	/**
-	 * Create Table
-	 *
-	 * @param	string	the table name
-	 * @param	bool	should 'IF NOT EXISTS' be added to the SQL
-	 * @return	string
-	 */
-	protected function _create_table($table, $if_not_exists)
-	{
-		$sql = ($if_not_exists === TRUE)
-			? "IF NOT EXISTS (SELECT * FROM sysobjects WHERE ID = object_id(N'".$table."') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)\n"
-			: '';
-
-		return $sql
-			.'CREATE TABLE '.$this->db->escape_identifiers($table).' ('
-			.$this->_process_fields()
-			.$this->_process_primary_keys()
-			."\n);";
-	}
-
-	// --------------------------------------------------------------------
+	protected $_create_table_if = "IF NOT EXISTS (SELECT * FROM sysobjects WHERE ID = object_id(N'%s') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)\nCREATE TABLE";
 
 	/**
 	 * Drop Table

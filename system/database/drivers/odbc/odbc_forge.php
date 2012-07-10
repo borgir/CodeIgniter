@@ -34,6 +34,8 @@
  */
 class CI_DB_odbc_forge extends CI_DB_forge {
 
+	protected $_create_table_if	= FALSE;
+
 	/**
 	 * Drop Table
 	 *

@@ -36,32 +36,8 @@ class CI_DB_pdo_4d_forge extends CI_DB_4d_forge {
 
 	protected $_create_database	= 'CREATE SCHEMA %s';
 	protected $_drop_database	= 'DROP SCHEMA %s';
+	protected $_create_table_if	= 'CREATE TABLE IF NOT EXISTS';
 	protected $_rename_table	= FALSE;
-
-	/**
-	 * Create Table
-	 *
-	 * @param	string	the table name
-	 * @param	bool	should 'IF NOT EXISTS' be added to the SQL
-	 * @return	string
-	 */
-	protected function _create_table($table, $if_not_exists)
-	{
-		$sql = 'CREATE TABLE ';
-
-		if ($if_not_exists === TRUE)
-		{
-			$sql .= 'IF NOT EXISTS ';
-		}
-
-		return $sql
-			.$this->db->escape_identifiers($table).' ('
-			.$this->_process_fields()
-			.$this->_process_primary_keys()
-			."\n)";
-	}
-
-	// --------------------------------------------------------------------
 
 	/**
 	 * Alter table query

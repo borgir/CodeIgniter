@@ -36,31 +36,7 @@ class CI_DB_pdo_oci_forge extends CI_DB_pdo_forge {
 
 	protected $_create_database	= FALSE;
 	protected $_drop_database	= FALSE;
-
-	/**
-	 * Create Table
-	 *
-	 * @param	string	the table name
-	 * @param	bool	should 'IF NOT EXISTS' be added to the SQL
-	 * @return	string
-	 */
-	protected function _create_table($table, $if_not_exists)
-	{
-		$sql = 'CREATE TABLE ';
-
-		if ($if_not_exists === TRUE)
-		{
-			$sql .= 'IF NOT EXISTS ';
-		}
-
-		return $sql
-			.$this->db->escape_identifiers($table).' ('
-			.$this->_process_fields()
-			.$this->_process_primary_keys()
-			."\n)";
-	}
-
-	// --------------------------------------------------------------------
+	protected $_create_table_if	= 'CREATE TABLE IF NOT EXISTS';
 
 	/**
 	 * Drop Table
