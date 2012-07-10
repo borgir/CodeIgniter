@@ -76,32 +76,6 @@ class CI_DB_sqlite_forge extends CI_DB_forge {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Create Table
-	 *
-	 * @param	string	the table name
-	 * @param	bool	should 'IF NOT EXISTS' be added to the SQL
-	 * @return	mixed
-	 */
-	protected function _create_table($table, $fields, $primary_keys, $keys, $if_not_exists)
-	{
-		$sql = 'CREATE TABLE ';
-
-		// IF NOT EXISTS is not supported in SQLite 2
-		if ($if_not_exists === TRUE && $this->db->table_exists($table))
-		{
-			return TRUE;
-		}
-
-		return $sql
-			.$this->db->escape_identifiers($table).' ('
-			.$this->_process_fields()
-			.$this->_process_primary_keys()
-			."\n);";
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Alter table query
 	 *
 	 * Generates a platform-specific query so that a table can be altered

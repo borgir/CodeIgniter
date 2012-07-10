@@ -53,48 +53,9 @@ class CI_DB_pdo_oci_forge extends CI_DB_pdo_forge {
 			$sql .= 'IF NOT EXISTS ';
 		}
 
-		$sql .= $this->db->escape_identifiers($table).' (';
-		$current_field_count = 0;
-
-		foreach ($this->fields as $field => $attributes)
-		{
-			// Numeric field names aren't allowed in databases, so if the key is
-			// numeric, we know it was assigned by PHP and the developer manually
-			// entered the field information, so we'll simply add it to the list
-			if (is_numeric($field))
-			{
-				$sql .= "\n\t".$attributes;
-			}
-			else
-			{
-				$attributes = array_change_key_case($attributes, CASE_UPPER);
-
-				$sql .= "\n\t".$this->db->escape_identifiers($field).' '.$attributes['TYPE'];
-
-				if (isset($attributes['UNSINGED']) && $attributes['UNSIGNED'] === TRUE)
-				{
-					$sql .= ' UNSIGNED';
-				}
-
-				if (isset($attributes['DEFAULT']))
-				{
-					$sql .= " DEFAULT '".$attributes['DEFAULT']."'";
-				}
-
-				$sql .= (isset($attributes['NULL']) && $attributes['NULL'] === TRUE)
-					? '' : ' NOT NULL';
-
-				empty($attributes['CONSTRAINT']) OR ' CONSTRAINT '.$attributes['CONSTRAINT'];
-			}
-
-			// don't add a comma on the end of the last field
-			if (++$current_field_count < count($this->fields))
-			{
-				$sql .= ',';
-			}
-		}
-
 		return $sql
+			.$this->db->escape_identifiers($table).' ('
+			.$this->_process_fields()
 			.$this->_process_primary_keys()
 			."\n)";
 	}
@@ -112,7 +73,7 @@ class CI_DB_pdo_oci_forge extends CI_DB_pdo_forge {
 	 */
 	protected function _drop_table($table, $if_exists)
 	{
-		if ($if_exists === FALSE && ! $this->db->table_exists($table))
+		if ($if_exists === TRUE && ! $this->db->table_exists($table))
 		{
 			return TRUE;
 		}

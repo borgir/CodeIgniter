@@ -112,7 +112,7 @@ class CI_DB_oci8_forge extends CI_DB_forge {
 	 */
 	protected function _drop_table($table, $if_exists)
 	{
-		if ($if_exists === FALSE && ! $this->db->table_exists($table))
+		if ($if_exists === TRUE && ! $this->db->table_exists($table))
 		{
 			return TRUE;
 		}

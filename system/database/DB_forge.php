@@ -262,6 +262,28 @@ abstract class CI_DB_forge {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Create Table
+	 *
+	 * @param	string	the table name
+	 * @param	bool	should 'IF NOT EXISTS' be added to the SQL
+	 * @return	mixed
+	 */
+	protected function _create_table($table, $if_not_exists)
+	{
+		if ($if_not_exists === TRUE && $this->db->table_exists($table))
+		{
+			return TRUE;
+		}
+
+		return 'CREATE TABLE '.$this->db->escape_identifiers($table).'('
+			.$this->_process_fields()
+			.$this->_process_primary_keys()
+			."\n);";
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Drop Table
 	 *
 	 * @param	string	the table name
@@ -466,6 +488,77 @@ abstract class CI_DB_forge {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Process fields
+	 *
+	 * @return	string
+	 */
+	protected function _process_fields()
+	{
+		foreach ($this->fields as $field => $attributes)
+		{
+			$attrs = array_change_key_case($attributes, CASE_UPPER);
+
+			if (empty($attributes['TYPE']))
+			{
+				unset($this->fields[$field]);
+				continue;
+			}
+
+			$this->fields[$field] = empty($attributes['NAME'])
+						? "\n\t".$this->db->escape_identifiers($field)
+						: "\n\t".$this->db->escape_identifiers($attributes['NAME']);
+
+			$this->fields[$field] .= ' '.$attributes['TYPE'];
+
+			if ( ! empty($attributes['CONSTRAINT']))
+			{
+				if (is_array($attributes['CONSTRAINT']))
+				{
+					$attributes['CONSTRAINT'] = implode(',', $attributes['CONSTRAINT']);
+				}
+
+				$this->fields[$field] .= '('.$attributes['CONSTRAINT'].')';
+			}
+
+			if (array_key_exists('DEFAULT', $attributes))
+			{
+				if ($attributes['DEFAULT'] === NULL)
+				{
+					// Override the NULL attribute if that's our default
+					$attributes['NULL'] = TRUE;
+					$attributes['DEFAULT'] = 'NULL';
+				}
+				else
+				{
+					$attributes['DEFAULT'] = $this->db->escape($attributes['DEFAULT']);
+				}
+			}
+
+			$this->fields[$field] .= (empty($attributes['NULL']) && $attributes['NULL'] === TRUE)
+						? ' NULL' : ' NOT NULL';
+
+			if (isset($attributes['DEFAULT']))
+			{
+				$this->fields[$field] .= ' DEFAULT '.$attributes['DEFAULT'];
+			}
+
+			if ( ! empty($attributes['UNIQUE']) && $attributes['UNIQUE'] === TRUE)
+			{
+				$this->fields[$field] .= ' UNIQUE';
+			}
+		}
+
+		if (empty($this->fields))
+		{
+			return FALSE;
+		}
+
+		return implode(',', $this->fields);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Process primary keys
 	 *
 	 * @return	string
@@ -476,7 +569,10 @@ abstract class CI_DB_forge {
 
 		for ($i = 0, $c = count($this->primary_keys); $i < $c; $i++)
 		{
-			isset($this->fields[$this->primary_keys[$i]]) OR unset($this->primary_keys[$i]);
+			if ( ! isset($this->fields[$this->primary_keys[$i]]))
+			{
+				unset($this->primary_keys[$i]);
+			}
 		}
 
 		if (count($primary_keys) > 0)
